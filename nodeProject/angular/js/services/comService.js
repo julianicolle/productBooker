@@ -2,14 +2,15 @@ angular.module('comService', []).factory('com',comFnc);
 
 function comFnc($http,$q) {
      var com = {
-         loadImages:       loadImages,
-         savePres:      savePres
+         loadTagList:       loadTagList,
+         addTagToDb:      addTagToDb,
+         deleteTagFromDb: deleteTagFromDb
          
      };
    
-	function loadImages() { 
+	function loadTagList() { 
 		var deferred = $q.defer(); 
-		$http.get('/slidRouter/slids').
+		$http.get('/product/getTagList').
 			success(function(data, status, headers, config) {
 			console.log(data);
 			deferred.resolve(data); 
@@ -22,10 +23,10 @@ function comFnc($http,$q) {
 	};
 
 
-	function savePres(currentPres){
+	function addTagToDb(tag){
 		var deferred = $q.defer(); 
-		console.dir(currentPres);
-		$http.post('/savePres',currentPres).
+		console.dir(tag);
+		$http.post('/product/addTagToDb',tag).
 			success(function(data, status, headers, config) { 
 			deferred.resolve(data);
 		}).
@@ -36,7 +37,20 @@ function comFnc($http,$q) {
 		return deferred.promise; 
 	};
 
-
+	function deleteTagFromDb(id){
+		var deferred = $q.defer(); 
+		var message = {'url' : id}
+		console.dir(id);
+		$http.post('/product/deleteTagFromDb',message).
+			success(function(data, status, headers, config) { 
+			deferred.resolve(data);
+		}).
+		error(function(data, status, headers, config) {
+			deferred.reject(status);
+	        // or server returns response with an error status.
+		});
+		return deferred.promise; 
+	};
 
 	return com;
 };

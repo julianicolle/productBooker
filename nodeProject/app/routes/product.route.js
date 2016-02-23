@@ -15,7 +15,7 @@ var connection = mysql.createConnection({
   port     : '8889',
   user     : 'root',
   password : 'root',
-  database : 'mysql'
+  database : 'testJulia'
 });
 
 
@@ -31,7 +31,7 @@ if(!err) {
 router.route("/getId")
 	.post(function(request,res) {
  	console.log(request.body.info);
-	 	connection.query('SELECT * FROM `baseDeDonneesApp` WHERE `id` = ?', [request.body.info] , function(err, rows, fields) {
+	 	connection.query('SELECT * FROM `tag` WHERE `id` = ?', [request.body.info] , function(err, rows, fields) {
 			if (!err){
 				console.log('The solution is: ', rows);
 				if (rows.length > 0) {
@@ -48,5 +48,60 @@ router.route("/getId")
 	    
 		});
 	});
+
+router.route("/getTagList")
+	.get(function(request,res) {
+	 	connection.query('SELECT `id`, `available` FROM `tag`', function(err, rows, fields) {
+			if (!err){
+				console.log('The solution is: ', rows);
+				if (rows.length > 0) {
+					res.status(200).send(rows);
+				}
+				else {
+					res.status(500).send(false);	
+				}
+			}
+			else{
+				console.log('Error while performing Query.');
+				res.status(500).send(err);
+			}
+	    
+		});
+	});
+
+
+
+router.route("/addTagToDb")
+.post(function(request,res) {
+	console.log(request.body);
+ 	connection.query('INSERT INTO tag SET ?', [request.body] , function(err, rows) {
+		if (!err){
+			console.log('inserted', rows);
+			res.status(200).send(true);	
+		}
+		else{
+			console.log('Error while performing Query.');
+			res.status(500).send(err);
+		}
+    
+	});
+});
+
+router.route("/deleteTagFromDb")
+.post(function(request,res) {
+	console.log("             _____________                 ");
+	console.log(request.body);
+ 	connection.query('DELETE FROM `tag` WHERE `id` = ?', [request.body.url] , function(err, rows) {
+		if (!err){
+			console.log('deleted', rows);
+			res.status(200).send(true);	
+		}
+		else{
+			console.log('Error while performing Query.');
+			res.status(500).send(err);
+		}
+    
+	});
+});
 
  
